@@ -1,6 +1,0 @@
-/model/test.py
-/model/train.py
-/model/test.py
-*.ipynb
-Dockerfile
-app.py
