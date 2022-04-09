@@ -3,6 +3,9 @@
 
 Ссылка на бот: https://t.me/DogClfBot
 
+# Demo
+![bot_demo](images/demo.gif)
+
 # Dataset
 
 ImageWoof - 10 классов собак
