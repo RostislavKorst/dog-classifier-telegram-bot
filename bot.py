@@ -5,6 +5,7 @@ from telegram.ext import CommandHandler
 from telegram.ext import Updater, MessageHandler, Filters
 
 from model import get_prediction_by
+from model.utils import get_date
 
 telegram_bot_token = os.getenv("TOKEN")
 
@@ -16,6 +17,8 @@ def start(update, context):
     """
     Set up the introductory statement for the bot when the /start command is invoked
     """
+    time = get_date()
+    print(time + " Пользователь нажал кнопку start\n")
     chat_id = update.effective_chat.id
     greeting_message = "Приветствую! Приложите фотографию собаки, породу которой хотите классифицировать"
     message_note = "Пока я умею классифицировать только такие породы:\nShih-Tzu\nRhodesian ridgeback\nBeagle\n" \
@@ -29,11 +32,14 @@ def full_photo_input_handler(update, context):
     """
     Handle case when user upload document into bot
     """
+    time = get_date()
+    print(time + " Пользователь отправил документ")
     file = context.bot.get_file(update.message.document)
     file = io.BytesIO(file.download_as_bytearray())
     dog, prob = get_prediction_by(file)
     prob = "{:.1f}".format(prob * 100)
     message = f"Порода собаки: {dog}\nВероятность: {prob}%\n"
+    print("Пользователь получил предсказание\n" + message)
     update.message.reply_text(message)
 
 
@@ -41,11 +47,14 @@ def compressed_photo_input_handler(update, context):
     """
     Handle case when user upload photo into bot
     """
+    time = get_date()
+    print(time + " Пользователь отправил фото")
     file = context.bot.get_file(update.message.photo[-1].file_id)
     file = io.BytesIO(file.download_as_bytearray())
     dog, prob = get_prediction_by(file)
     prob = "{:.1f}".format(prob * 100)
     message = f"Порода собаки: {dog}\nВероятность: {prob}%\n"
+    print("Пользователь получил предсказание\n" + message)
     update.message.reply_text(message)
 
 
@@ -53,7 +62,9 @@ def text_input_handler(update, context):
     """
     Handle case when user text something to bot except for uploading photo
     """
-    message = "Я не понимаю слова, я понимаю только язык картинок с собачками, прикрепите пожалуйста файл с собакой"
+    time = get_date()
+    print(time + " Пользователь написал сообщение: " + update.message.text + "\n")
+    message = "Я не понимаю слова, я понимаю только язык картинок с собаками, прикрепите, пожалуйста, фото собаки"
     update.message.reply_text(message)
 
 
@@ -64,8 +75,4 @@ dispatcher.add_handler(MessageHandler(Filters.text, text_input_handler))
 dispatcher.add_handler(MessageHandler(Filters.photo, compressed_photo_input_handler))
 dispatcher.add_handler(MessageHandler(Filters.document, full_photo_input_handler))
 
-updater.start_webhook(listen="0.0.0.0",
-                      port=int(os.environ.get('PORT', 5000)),
-                      url_path=telegram_bot_token,
-                      webhook_url='https://dog-breed-classifier1.herokuapp.com/' + telegram_bot_token
-                      )
+updater.start_polling()

@@ -10,7 +10,7 @@ from sklearn.metrics import classification_report
 from torch.utils.data import DataLoader
 
 from model.config import (
-    MODEL_TYPE, NUM_CLASSES, TRAIN_PATH, TEST_PATH, TRAIN_DATA_TRANSFORMS, TEST_DATA_TRANSFORMS, BATCH_SIZE, NUM_WORKERS
+    NUM_CLASSES, TRAIN_PATH, TEST_PATH, TRAIN_DATA_TRANSFORMS, TEST_DATA_TRANSFORMS, BATCH_SIZE, NUM_WORKERS, MODEL_TYPE
 )
 
 
@@ -29,11 +29,10 @@ def get_model(weights_path: Optional[str] = None) -> torch.nn.Module:
     Getting model with provided weights.
 
     :param weights_path: path to saved weights or None.
-    :return: EfficientNet model with provided weights.
+    :return: model with provided weights.
     """
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     model = EfficientNet.from_name(MODEL_TYPE, num_classes=NUM_CLASSES)
-
     if weights_path is not None:
         model.load_state_dict(torch.load(weights_path, map_location=device))
     return model

@@ -14,7 +14,7 @@ WEIGHTS_PATH = "./model/weights/best.pts"
 # Training parameters.
 BATCH_SIZE = 32
 LEARNING_RATE = 0.001
-EPOCHS = 25
+EPOCHS = 100
 NUM_WORKERS = min(cpu_count(), 10)
 
 CLASS_NAMES = {
